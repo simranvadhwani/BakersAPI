@@ -19,6 +19,18 @@ namespace Bakers
             // Add services to the container.
 
             builder.Services.AddControllers();
+
+            //CORS Configuration..
+            builder.Services.AddCors(options =>
+            {
+                options.AddPolicy("ReactAppPolicy",
+                    builder =>
+                    {
+                        builder.WithOrigins("http://localhost:3000")
+                               .AllowAnyMethod()
+                               .AllowAnyHeader();
+                    });
+            });
             // For Entity Framework
             builder.Services.AddDbContext<BakersDbContext>(options => options.UseSqlServer(builder.Configuration.GetConnectionString("DefaultConnectionString")));
 
@@ -48,9 +60,7 @@ namespace Bakers
                     IssuerSigningKey = new SymmetricSecurityKey(Encoding.UTF8.GetBytes(builder.Configuration["JWT:Secret"]))
                 };
             });
-
-
-
+            
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
             builder.Services.AddSwaggerGen();
@@ -65,6 +75,8 @@ namespace Bakers
             }
 
             app.UseHttpsRedirection();
+
+            app.UseCors("ReactAppPolicy");
 
             app.UseAuthentication();
 
