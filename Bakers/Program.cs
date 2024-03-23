@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Configuration;
 using Microsoft.IdentityModel.Tokens;
+using Microsoft.OpenApi.Models;
 using System;
 using System.Text;
 
@@ -63,7 +64,31 @@ namespace Bakers
             
             // Learn more about configuring Swagger/OpenAPI at https://aka.ms/aspnetcore/swashbuckle
             builder.Services.AddEndpointsApiExplorer();
-            builder.Services.AddSwaggerGen();
+            builder.Services.AddSwaggerGen(c =>
+             {
+                 c.AddSecurityDefinition("Bearer", new OpenApiSecurityScheme
+                 {
+                     In = ParameterLocation.Header,
+                     Description = "Please enter JWT token in the field",
+                     Name = "Authorization",
+                     Type = SecuritySchemeType.ApiKey,
+                 });
+
+                 c.AddSecurityRequirement(new OpenApiSecurityRequirement
+                 {
+                     {
+                            new OpenApiSecurityScheme
+                            {
+                                Reference = new OpenApiReference
+                                {
+                                    Type = ReferenceType.SecurityScheme,
+                                    Id = "Bearer"
+                                }
+                            },
+                            Array.Empty<string>()
+                     }
+                 });
+             });
 
             var app = builder.Build();
 
@@ -71,7 +96,12 @@ namespace Bakers
             if (app.Environment.IsDevelopment())
             {
                 app.UseSwagger();
-                app.UseSwaggerUI();
+                app.UseSwaggerUI(c =>
+                {
+                    c.SwaggerEndpoint("/swagger/v1/swagger.json", "My API V1");
+                    c.OAuthClientId("swagger");
+                    c.OAuthAppName("Swagger UI");
+                });
             }
 
             app.UseHttpsRedirection();

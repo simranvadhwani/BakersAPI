@@ -10,5 +10,6 @@ namespace Bakers.ContextClass
         {
             base.OnModelCreating(builder);
         }
+        public DbSet<Product> products { get; set; }
     }
 }
