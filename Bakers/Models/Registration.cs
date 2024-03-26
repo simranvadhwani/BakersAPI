@@ -1,5 +1,4 @@
 ﻿using System.ComponentModel.DataAnnotations;
-using System.ComponentModel.DataAnnotations.Schema;
 
 namespace Bakers.Models
 {
@@ -15,5 +14,6 @@ namespace Bakers.Models
         [Required(ErrorMessage = "Password is required")]
         public string Password { get; set; }
 
+        public bool IsAdmin { get; set; } 
     }
 }

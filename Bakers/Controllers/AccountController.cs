@@ -83,6 +83,23 @@ namespace Bakers.Controllers
             if (!result.Succeeded)
                 return StatusCode(StatusCodes.Status500InternalServerError, new Response { Status = "Error", Message = "User creation failed! Please check user details and try again." });
 
+            // Assign default role to the user (e.g., User)
+            if (!await roleManager.RoleExistsAsync(UserRoles.User))
+            {
+                await roleManager.CreateAsync(new IdentityRole(UserRoles.User));
+            }
+            await userManager.AddToRoleAsync(user, UserRoles.User);
+
+            // For example, assign "Admin" role to specific users
+            if (model.IsAdmin)
+            {
+                if (!await roleManager.RoleExistsAsync(UserRoles.Admin))
+                {
+                    await roleManager.CreateAsync(new IdentityRole(UserRoles.Admin));
+                }
+                await userManager.AddToRoleAsync(user, UserRoles.Admin);
+            }
+
             return Ok(new Response { Status = "Success", Message = "User created successfully!" });
         }
 
