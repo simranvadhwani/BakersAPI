@@ -52,5 +52,32 @@ namespace Bakers.Controllers
                 return StatusCode(500, "An error occurred while processing your request: " + ex.Message);
             }
         }
+
+        [HttpGet]
+        [Route("productGetById")]
+        public IActionResult GetProductById(int id)
+        {
+            try
+            {
+                var getProducts = _dbContext.products.Where(p => p.productId == id).FirstOrDefault();
+                if (getProducts != null)
+                {
+                    var productViewModel = new ProductViewModel();
+                    productViewModel.productId = getProducts.productId;
+                    productViewModel.Price = getProducts.Price;
+                    productViewModel.Name = getProducts.Name;
+                    productViewModel.Discription = getProducts.Discription;
+                    return Ok(productViewModel);
+                }
+                else
+                {
+                    return NotFound("Product with ID " + id + " does not exist.");
+                }
+            }catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while processing your request: " + ex.Message);
+
+            }
+        }
     }
 }
