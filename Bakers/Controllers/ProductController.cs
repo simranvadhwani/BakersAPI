@@ -89,7 +89,7 @@ namespace Bakers.Controllers
             {
                 if (model != null)
                 {                 
-                    var existingProduct = _dbContext.products.FirstOrDefault(p => p.productId == model.productId);
+                    var existingProduct = _dbContext.carts.FirstOrDefault(p => p.ProductId == model.productId);
                     var cartData = new Cart();
                     if (existingProduct != null)
                     {                        
