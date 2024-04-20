@@ -88,29 +88,33 @@ namespace Bakers.Controllers
             try
             {
                 if (model != null)
-                {                 
-                    var existingProduct = _dbContext.carts.FirstOrDefault(p => p.ProductId == model.productId);
-                    var cartData = new Cart();
-                    if (existingProduct != null)
-                    {                        
-                        cartData.ProductId = model.productId;
-                        cartData.Quantity = model.Quantity;
-                        cartData.Price = model.Price * model.Quantity;
-                        cartData.CreatedDate = DateTime.Now;
-                        _dbContext.carts.Add(cartData);
-                        _dbContext.SaveChanges();
-
-                        return Ok("Product added to cart.");
-                    }
-                    else
+                {
+                    var cartData = _dbContext.carts.FirstOrDefault(p => p.ProductId == model.productId);
+                    if (cartData != null)
                     {
-                        cartData.Quantity = model.Quantity;
+                        // Update the existing cart data
+                        cartData.Quantity += model.Quantity;
                         cartData.Price = model.Price * model.Quantity;
                         cartData.CreatedDate = DateTime.Now;
                         _dbContext.carts.Update(cartData);
                         _dbContext.SaveChanges();
 
-                        return Ok("Product updated to cart.");
+                        return Ok("Product updated in cart.");
+                    }
+                    else
+                    {
+                        // Add a new cart entry
+                        cartData = new Cart
+                        {
+                            ProductId = model.productId,
+                            Quantity = model.Quantity,
+                            Price = model.Price * model.Quantity,
+                            CreatedDate = DateTime.Now
+                        };
+                        _dbContext.carts.Add(cartData);
+                        _dbContext.SaveChanges();
+
+                        return Ok("Product added to cart.");
                     }
                 }
                 else
