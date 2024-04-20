@@ -17,7 +17,7 @@ namespace Bakers.Controllers
         private readonly UserManager<ApplicationUser> userManager;
         private readonly RoleManager<IdentityRole> roleManager;
         private readonly IConfiguration _configuration;
-        public ProductController(BakersDbContext dbContext,UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration) 
+        public ProductController(BakersDbContext dbContext, UserManager<ApplicationUser> userManager, RoleManager<IdentityRole> roleManager, IConfiguration configuration)
         {
             this.userManager = userManager;
             this.roleManager = roleManager;
@@ -29,7 +29,7 @@ namespace Bakers.Controllers
         [HttpGet]
         [Route("products")]
         public IActionResult GetProducts()
-            {
+        {
             try
             {
                 var products = _dbContext.products.ToList();
@@ -73,11 +73,55 @@ namespace Bakers.Controllers
                 {
                     return NotFound("Product with ID " + id + " does not exist.");
                 }
-            }catch (Exception ex)
+            }
+            catch (Exception ex)
             {
                 return StatusCode(500, "An error occurred while processing your request: " + ex.Message);
 
             }
         }
+
+        [HttpPost]
+        [Route("addProductToCart")]
+        public IActionResult AddProductToCart([FromBody] ProductViewModel model)
+        {
+            try
+            {
+                if (model != null)
+                {                 
+                    var existingProduct = _dbContext.products.FirstOrDefault(p => p.productId == model.productId);
+                    var cartData = new Cart();
+                    if (existingProduct != null)
+                    {                        
+                        cartData.ProductId = model.productId;
+                        cartData.Quantity = model.Quantity;
+                        cartData.Price = model.Price * model.Quantity;
+                        cartData.CreatedDate = DateTime.Now;
+                        _dbContext.carts.Add(cartData);
+                        _dbContext.SaveChanges();
+
+                        return Ok("Product added to cart.");
+                    }
+                    else
+                    {
+                        cartData.Quantity = model.Quantity;
+                        cartData.Price = model.Price * model.Quantity;
+                        cartData.CreatedDate = DateTime.Now;
+                        _dbContext.carts.Update(cartData);
+                        _dbContext.SaveChanges();
+
+                        return Ok("Product updated to cart.");
+                    }
+                }
+                else
+                {
+                    return BadRequest("Invalid product data.");
+                }
+            }
+            catch (Exception ex)
+            {
+                return StatusCode(500, "An error occurred while processing the request.");
+            }
+        }
     }
-}
+ }
