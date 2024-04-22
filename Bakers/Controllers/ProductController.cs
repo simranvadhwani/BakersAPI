@@ -80,7 +80,6 @@ namespace Bakers.Controllers
 
             }
         }
-
         [HttpPost]
         [Route("addProductToCart")]
         public IActionResult AddProductToCart([FromBody] ProductViewModel model)
@@ -94,12 +93,20 @@ namespace Bakers.Controllers
                     {
                         // Update the existing cart data
                         cartData.Quantity += model.Quantity;
-                        cartData.Price = model.Price * model.Quantity;
+                        cartData.Price += model.Price * model.Quantity;
                         cartData.CreatedDate = DateTime.Now;
                         _dbContext.carts.Update(cartData);
                         _dbContext.SaveChanges();
 
-                        return Ok("Product updated in cart.");
+                        // Retrieve total count of items in the cart
+                        int cartItemCount = _dbContext.carts.Count(); // Modify this according to your data model
+
+                        return Ok(new
+                        {
+                            Message = "Product updated in cart.",
+                            CartId = cartData.Id,
+                            CartLength = cartItemCount
+                        });
                     }
                     else
                     {
@@ -114,7 +121,15 @@ namespace Bakers.Controllers
                         _dbContext.carts.Add(cartData);
                         _dbContext.SaveChanges();
 
-                        return Ok("Product added to cart.");
+                        // Retrieve total count of items in the cart
+                        int cartItemCount = _dbContext.carts.Count(); 
+
+                        return Ok(new
+                        {
+                            Message = "Product added to cart.",
+                            CartId = cartData.Id,
+                            CartLength = cartItemCount
+                        });
                     }
                 }
                 else
