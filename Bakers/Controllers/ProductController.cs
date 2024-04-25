@@ -159,7 +159,7 @@ namespace Bakers.Controllers
                     {
                         var productViewModel = new ProductViewModel(); // Create a new instance for each iteration
                         productViewModel.productId = item.Product.productId;
-                        productViewModel.Price = item.Cart.Price;
+                        productViewModel.Price = item.Product.Price;
                         productViewModel.Name = item.Product.Name;
                         productViewModel.Discription = item.Product.Discription;
                         productViewModel.Quantity = item.Cart.Quantity;
