@@ -29,7 +29,8 @@ namespace Bakers
                     {
                         builder.WithOrigins("http://localhost:3000")
                                .AllowAnyMethod()
-                               .AllowAnyHeader();
+                               .AllowAnyHeader()
+                              .AllowCredentials();
                     });
             });
             // For Entity Framework
