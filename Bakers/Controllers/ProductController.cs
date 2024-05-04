@@ -152,20 +152,20 @@ namespace Bakers.Controllers
                 var cartData = (from p in _dbContext.products
                                 join c in _dbContext.carts on p.productId equals c.ProductId
                                 select new { Product = p, Cart = c }).ToList();
-                var productViewModels = new List<ProductViewModel>(); // Create a list to store multiple ProductViewModel instances
+                var productViewModels = new List<ProductViewModel>();
                 if (cartData.Count > 0)
                 {
                     foreach (var item in cartData)
                     {
-                        var productViewModel = new ProductViewModel(); // Create a new instance for each iteration
+                        var productViewModel = new ProductViewModel(); 
                         productViewModel.productId = item.Product.productId;
                         productViewModel.Price = item.Product.Price;
                         productViewModel.Name = item.Product.Name;
                         productViewModel.Discription = item.Product.Discription;
                         productViewModel.Quantity = item.Cart.Quantity;
-                        productViewModels.Add(productViewModel); // Add the current instance to the list
+                        productViewModels.Add(productViewModel);
                     }
-                    return Ok(productViewModels); // Return the list of ProductViewModels
+                    return Ok(productViewModels); 
                 }
                 else
                 {
