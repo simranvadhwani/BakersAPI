@@ -5,6 +5,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
+using Microsoft.EntityFrameworkCore;
 
 namespace Bakers.Controllers
 {
@@ -178,6 +179,20 @@ namespace Bakers.Controllers
             }
         }
 
+        [HttpDelete("deleteProducts/{id}")]
+        public async Task<IActionResult> DeleteProduct(int id)
+        {
+            var product = await _dbContext.carts.FirstAsync(e=>e.ProductId== id);
+            if (product == null)
+            {
+                return NotFound();
+            }
+
+            _dbContext.carts.Remove(product);
+            await _dbContext.SaveChangesAsync();
+
+            return NoContent();
+        }
 
     }
 }
